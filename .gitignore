@@ -1,0 +1,3 @@
+/app/config/development.json
+/node_modules
+*.log
