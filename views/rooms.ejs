@@ -9,6 +9,8 @@
 	<script>
 	'use strict';
 	$(() => {
+		// roomslist is not a route, it's a socket namespace
+		// create multiple sub pipelines in one connection,
 		let socket = io('<%= host %>' + '/roomslist', {
 			transports: ['websocket']
 		});
@@ -20,10 +22,11 @@
 			for(let cat of chatrooms) {
 				listStr += `<a href="/chat/${cat.roomID}"><li>${cat.room}</li></a>`;
 			}
+			//render list
 			roomsListDiv.html('').append(listStr);
 		}
 
-		// Get a list of chatrooms
+		// Send "getChatrooms" back to server,  to get a list of chatrooms
 		socket.emit('getChatrooms');
 
 		// Event listener for chatRoomsList
@@ -33,6 +36,7 @@
 
 		$('#createBtn').on('click',() => {
 			if(newRoomInput.val()!== ''){
+				//Send 'createNewRoom' back to server, to create a new Room with random roomID
 				socket.emit('createNewRoom', newRoomInput.val());
 				newRoomInput.val('');
 			}

@@ -9,6 +9,7 @@ if(process.env.NODE_ENV === "production"){
 		secret: config.sessionSecret,
 		resave: false,
 		saveUninitialized: false,
+		//store session in mongodb, otherwise memery will full and server wiil be killed easily
 		store: new MongoStore({
 			mongooseConnection: db.Mongoose.connection
 		})

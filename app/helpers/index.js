@@ -25,10 +25,11 @@ let route = routes => {
 	_registerRoutes(routes);
 	return router;
 }
+
 //Find a single user based on a key
 let findOne = profileID => {
 	return db.userModel.findOne({
-		'profileID': profileID
+		'profileId': profileID
 	});
 }
 // create a new user and return that instance
@@ -103,7 +104,8 @@ let addUserToRoom = (allrooms, data, socket) => {
 	//get room object
 	let getRoom = findRoomById(allrooms, data.roomID);
 	if(getRoom !== undefined) {
-		// Get the active user's ID
+		// Get the active user's ID used by session (store in session cookie)
+		// cannot use socket id, that changes when user reconnect or refress page
 		let userID = socket.request.session.passport.user;
 		// check to see user already in the room
 		let checkUser = getRoom.users.findIndex((element, index, array) => {
@@ -121,7 +123,7 @@ let addUserToRoom = (allrooms, data, socket) => {
 
 		//push user into the room's users array
 		getRoom.users.push({
-			socketID: socket.id,
+			socketID: socket.id,//unique value socket.io assigned every time create a connection
 			userID,
 			user: data.user,
 			userPic: data.userPic
@@ -131,7 +133,7 @@ let addUserToRoom = (allrooms, data, socket) => {
 		socket.join(data.roomID);
 
 		//return room OBJ
-		return getRoom;
+		return getRoom.users;
 	}
 }
 
@@ -148,7 +150,9 @@ let removeUserFromRoom = (allrooms, socket) => {
 		});
 
 		if(findUser > -1) {
+			//leave the room channel
 			socket.leave(room.roomID);
+			//remove user
 			room.users.splice(findUser, 1);
 			return room;
 		}

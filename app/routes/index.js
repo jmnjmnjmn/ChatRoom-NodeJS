@@ -16,7 +16,7 @@ module.exports = () => {
 				});
 			}],
 			'/chat/:id':[h.isAuthenticated,(req, res, next) => {
-				//Find a 
+				//Find a chatroom with the given id
 				let getRoom = h.findRoomById(req.app.locals.chatrooms, req.params.id);
 				if(getRoom === undefined){
 					return next();
@@ -41,6 +41,7 @@ module.exports = () => {
 				failureRedirect: '/'
 			}),
 			'/logout': (req, res, next) =>{
+				//by passprt clean out session, remove req.user
 				req.logout();
 				res.redirect('/');
 			}

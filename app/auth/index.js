@@ -8,10 +8,14 @@ const TwitterStrategy = require('passport-twitter').Strategy;
 
 
 module.exports = () => {
+	//connect to Express-session
+	//done(): invoke when authorization process ends, this id is unique id mongodb assign to each collection
 	passport.serializeUser((user, done)=>{
 		done(null, user.id);
 	});
-
+	
+	//fetch user from mongodb
+	//after mount this passport, req.user is available.
 	passport.deserializeUser((id, done) =>{
 		//Find the user using the _id
 		h.findById(id)
@@ -26,7 +30,7 @@ module.exports = () => {
 		h.findOne(profile.id)
 			.then(result => {
 				if(result) {
-					done(null, result);
+					done(null, result);//result: user obj back from mongodb
 				} else {
 					// Create a new user and return
 					h.createNewUser(profile)

@@ -21,13 +21,15 @@
 		let chatMessagesDiv = $('.chatMessages');
 		let filePicker = $('#uploadFile');
 
+		// When connect, send "join" back to server,  to get a updated user list
 		socket.on('connect', () => {
 			socket.emit('join', {
 				roomID,
-				user,
+				user,//name
 				userPic
 			});
 		});
+		
 		let userList = user => {
 			return `<div class="userBlock">
 					<div class="userPic"><img src="${user.userPic}" alt="${user.user}"></div>
@@ -55,7 +57,7 @@
 		chatInput.on('keyup', function(evt){
 			evt.preventDefault();
 			let messageFld = $(this);
-			if(evt.which === 13&& messageFld.val()!== ''){
+			if(evt.which === 13 && messageFld.val()!== ''){
 				socket.emit('newMessage',{
 				roomID,
 				user,
@@ -67,7 +69,7 @@
 				messageFld.val('');
 			}
 		});
-
+		//update in message feed
 		socket.on('inMessage', data=>{
 			let parsedData = JSON.parse(data);
 			updateFeed(parsedData.userPic, parsedData.message); 
